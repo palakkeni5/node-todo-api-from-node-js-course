@@ -1,3 +1,5 @@
+require('./config/config')
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const { ObjectID } = require('mongodb')
@@ -62,7 +64,7 @@ app.delete('/todos/:id', (req , res)=>{
     if(!ObjectID.isValid(id)){
         res.status(404).send() 
     }else{
-        Todo.findByIdAndRemove(id).then((todo)=>{
+        Todo.findByIdAndDelete(id).then((todo)=>{
             if(!todo){
                 res.status(404).send()
             }else{

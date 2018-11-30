@@ -124,7 +124,7 @@ describe("DELETE /todos/:id",()=>{
                 expect(todo).toNotExist()
                 done()
             }).catch((e)=>{
-                console.log(e)
+                done(e)
             })
         })
     })
