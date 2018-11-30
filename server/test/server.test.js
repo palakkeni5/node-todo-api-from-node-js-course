@@ -12,7 +12,9 @@ const todos = [
         text: "First test todo"
     } , {
         _id : new ObjectID(),
-        text: "Second test todo"
+        text: "Second test todo",
+        completed: true,
+        completedAt : 1200383
     }
 ]
 
@@ -50,7 +52,6 @@ describe('Post /todos', ()=>{
         
         request(app)
             .post('/todos')
-            .send({})
             .expect(400)
             .end((err , res) =>{
                 if(err){
@@ -138,6 +139,44 @@ describe("DELETE /todos/:id",()=>{
         request(app)
         .delete(`/todos/123`)
         .expect(404)
+        .end(done)
+
+    })
+})
+
+describe('PATCH /todos/:id', ()=>{
+    it('should update the todo',(done)=>{
+        var hexID=todos[0]._id.toHexString()
+        var updated_text = 'First test case updated'
+
+        request(app)
+        .patch(`/todos/${hexID}`)
+        .send({text:updated_text, completed:true})
+        .expect(200)
+        .expect( (res)=>{
+            //console.log(res)
+            expect(res.body.todo.text).toBe(updated_text)
+            expect(res.body.todo.completedAt).toBeA('number')
+            expect(res.body.todo.completed).toBe(true)
+        } )
+        .end(done)
+
+
+    })
+
+    it('should clear completedAt when Todo is not completed',(done)=>{
+        var hexID=todos[1]._id.toHexString()
+        var updated_text='Second test case updated'
+
+        request(app)
+        .patch(`/todos/${hexID}`)
+        .send({text:updated_text , completed:false})
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body.todo.text).toBe(updated_text)
+            expect(res.body.todo.completed).toBe(false)
+            expect(res.body.todo.completedAt).toNotExist()
+        })
         .end(done)
 
     })
